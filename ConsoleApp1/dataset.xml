@@ -1,0 +1,99 @@
+<?xml version="1.0" standalone="yes"?>
+<NewDataSet>
+  <xs:schema id="NewDataSet" xmlns="" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xs:element name="NewDataSet" msdata:IsDataSet="true" msdata:UseCurrentLocale="true">
+      <xs:complexType>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+          <xs:element name="Encomenda">
+            <xs:complexType>
+              <xs:sequence>
+                <xs:element name="EncId" type="xs:int" minOccurs="0" />
+                <xs:element name="ClienteId" type="xs:int" minOccurs="0" />
+                <xs:element name="Data" type="xs:dateTime" minOccurs="0" />
+                <xs:element name="Total" type="xs:decimal" minOccurs="0" />
+                <xs:element name="RowVersion" type="xs:base64Binary" minOccurs="0" />
+              </xs:sequence>
+            </xs:complexType>
+          </xs:element>
+        </xs:choice>
+      </xs:complexType>
+    </xs:element>
+  </xs:schema>
+  <Encomenda>
+    <EncId>0</EncId>
+    <ClienteId>1</ClienteId>
+    <Data>2025-06-20T10:15:00+01:00</Data>
+    <Total>0.00</Total>
+    <RowVersion>AAAAAAAAB9E=</RowVersion>
+  </Encomenda>
+  <Encomenda>
+    <EncId>1</EncId>
+    <ClienteId>3</ClienteId>
+    <Data>2025-06-22T17:50:10.037+01:00</Data>
+    <Total>200.00</Total>
+    <RowVersion>AAAAAAAAB94=</RowVersion>
+  </Encomenda>
+  <Encomenda>
+    <EncId>2</EncId>
+    <ClienteId>2</ClienteId>
+    <Data>2025-06-22T10:14:36.207+01:00</Data>
+    <Total>110.00</Total>
+    <RowVersion>AAAAAAAAB9U=</RowVersion>
+  </Encomenda>
+  <Encomenda>
+    <EncId>3</EncId>
+    <ClienteId>1</ClienteId>
+    <Data>2025-06-22T10:13:24.053+01:00</Data>
+    <Total>200.00</Total>
+    <RowVersion>AAAAAAAAB9I=</RowVersion>
+  </Encomenda>
+  <Encomenda>
+    <EncId>4</EncId>
+    <ClienteId>3</ClienteId>
+    <Data>2025-06-22T12:31:49.16+01:00</Data>
+    <Total>250.00</Total>
+    <RowVersion>AAAAAAAAB9k=</RowVersion>
+  </Encomenda>
+  <Encomenda>
+    <EncId>6</EncId>
+    <ClienteId>4</ClienteId>
+    <Data>2025-06-22T10:39:17.813+01:00</Data>
+    <Total>650.00</Total>
+    <RowVersion>AAAAAAAAB9o=</RowVersion>
+  </Encomenda>
+  <Encomenda>
+    <EncId>7</EncId>
+    <ClienteId>1</ClienteId>
+    <Data>2025-06-22T10:43:13.607+01:00</Data>
+    <Total>3570.00</Total>
+    <RowVersion>AAAAAAAAB9M=</RowVersion>
+  </Encomenda>
+  <Encomenda>
+    <EncId>15</EncId>
+    <ClienteId>2</ClienteId>
+    <Data>2025-06-22T15:08:15.963+01:00</Data>
+    <Total>5750.00</Total>
+    <RowVersion>AAAAAAAAB9c=</RowVersion>
+  </Encomenda>
+  <Encomenda>
+    <EncId>16</EncId>
+    <ClienteId>2</ClienteId>
+    <Data>2025-06-22T17:38:33.567+01:00</Data>
+    <Total>798.00</Total>
+    <RowVersion>AAAAAAAAB9s=</RowVersion>
+  </Encomenda>
+  <Encomenda>
+    <EncId>17</EncId>
+    <ClienteId>1</ClienteId>
+    <Data>2025-06-22T17:50:10.017+01:00</Data>
+    <Total>4560.00</Total>
+    <RowVersion>AAAAAAAAB9w=</RowVersion>
+  </Encomenda>
+  <Encomenda>
+    <EncId>18</EncId>
+    <ClienteId>2</ClienteId>
+    <Data>2025-06-22T17:53:52.817+01:00</Data>
+    <Total>4440.00</Total>
+    <RowVersion>AAAAAAAAB+A=</RowVersion>
+  </Encomenda>
+</NewDataSet>
