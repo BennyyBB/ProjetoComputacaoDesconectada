@@ -68,48 +68,48 @@ namespace DatabaseExample4
             while (true)
             {
                 Console.WriteLine("Select a Database Operation: ");
-                Console.WriteLine(@"1. Show Records
-2. Insert Record
-3. Update Record
-4. Delete Record
-5. Reconciliação
-6. Exit");
+                Console.WriteLine(@"1. Mostrar Encomendas
+                                    2. Inserir Encomendas
+                                    3. Atualizar Encomenda
+                                    4. Eliminar Encomenda
+                                    5. Reconciliar com Servidor BD
+                                    6. sair");
                 Console.WriteLine("Enter Your Choice: ");
                 ch = Int32.Parse(Console.ReadLine());
 
                 switch (ch)
                 {
                     case 1:  //Display Records
-                        ob.ShowRecords();
+                        ob.ShowOrders();
                         break;
                     case 2:
-                        Console.WriteLine("Insert a Record...");
+                        Console.WriteLine("Inserir uma Encomenda");
                         //Insert a Record
-                        ob.InsertRecord();
+                        ob.InsertOrder();
                         break;
                     case 3:  //Update Record
-                        Console.WriteLine("Update Record...");
-                        ob.UpdateRecord();
+                        Console.WriteLine("Atualizar uma Encomenda");
+                        ob.UpdateOrder();
                         break;
                     case 4: //Delete Record
-                        Console.WriteLine("Delete Record...");
-                        ob.DeleteRecord();
+                        Console.WriteLine("Eliminar uma Encomenda");
+                        ob.DeleteOrder();
                         break;
                     case 5:
-                        Console.WriteLine("Reconcile Data...");
+                        Console.WriteLine("Reconciliar Dados com Servidor BD");
                         ob.reconcile();
                         break;
                     case 6:
                         Environment.Exit(0);
                         break;
                     default:
-                        Console.WriteLine("Invalid Choice Entered!");
+                        Console.WriteLine("Escolha Inválida");
                         break;
                 }
             }
         }
 
-        // NOVO MÉTODO: Tentar conectar (usado apenas no arranque)
+        // Used only while starting the app - used to check if connection to SQL is possible or not
         private bool TryConnect()
         {
             try
@@ -129,25 +129,24 @@ namespace DatabaseExample4
             }
         }
 
-        // NOVO MÉTODO: Inicialização da aplicação
+        // App Initialization
         public void InitializeApplication()
         {
             Console.WriteLine("=== INICIALIZANDO APLICAÇÃO ===");
 
-            // Carregar instruções pendentes
+            // Loads Pending Instructions
             LoadInstructions();
 
-            // Tentar conectar à base de dados
             if (TryConnect())
             {
                 Console.WriteLine("✅ APLICAÇÃO INICIADA EM MODO ONLINE");
-                // Carregar dados da BD
+                // If connection is up, load data from database
                 LoadDataFromDatabase();
             }
             else
             {
                 Console.WriteLine("⚠️  APLICAÇÃO INICIADA EM MODO OFFLINE");
-                // Carregar dados do XML local
+                // If connection is down, load data from XML file
                 LoadDataFromXML();
             }
 
@@ -163,19 +162,18 @@ namespace DatabaseExample4
         {
             try
             {
+                // Create new DataSet and fill it with Encomenda tabel
                 ds = new DataSet();
-                // IMPORTANTE: Incluir RowVersion na query
                 da = new SqlDataAdapter("select EncId, ClienteId, Data, Total, RowVersion from Encomenda", con);
                 da.Fill(ds, "Encomenda");
 
-                // Salvar também em XML para backup
+                // Write XML as well, for backup
                 ds.WriteXml("dataset.xml", XmlWriteMode.WriteSchema);
                 Console.WriteLine("Dados carregados da base de dados");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Erro ao carregar dados da BD: {ex.Message}");
-                // Fallback para XML se a BD falhar
                 LoadDataFromXML();
             }
         }
@@ -184,17 +182,19 @@ namespace DatabaseExample4
         {
             try
             {
+ 
                 ds = new DataSet();
                 string filePath = "dataset.xml";
 
+                // If there's an existing XML file, fill dataset with it's info
                 if (File.Exists(filePath))
                 {
                     ds.ReadXml(filePath, XmlReadMode.ReadSchema);
                     Console.WriteLine("Dados carregados do ficheiro XML local");
                 }
+                // If there's no XML file, create a empty DataSet
                 else
                 {
-                    // Criar DataSet vazio se não existir XML
                     CreateEmptyDataSet();
                     Console.WriteLine("Criado dataset vazio (sem ficheiro XML encontrado)");
                 }
@@ -206,7 +206,7 @@ namespace DatabaseExample4
             }
         }
 
-        // NOVO MÉTODO: Criar DataSet vazio
+        // Creating empty DataSet
         private void CreateEmptyDataSet()
         {
             ds = new DataSet();
@@ -219,8 +219,8 @@ namespace DatabaseExample4
             ds.Tables.Add(table);
         }
 
-        // MÉTODO SIMPLIFICADO: Não faz mais FetchData
-        public void ShowRecords()
+        // Shows existing orders
+        public void ShowOrders()
         {
             Console.WriteLine($"\n=== REGISTOS ({(connected ? "ONLINE" : "OFFLINE")}) ===");
 
@@ -236,11 +236,11 @@ namespace DatabaseExample4
                 {
                     if (dr.RowState == DataRowState.Deleted) continue;
 
-                    int x = Convert.ToInt32(dr["EncId"]);
-                    int x1 = Convert.ToInt32(dr["ClienteId"]);
-                    string s1 = dr["Data"].ToString();
-                    string s2 = dr["Total"].ToString();
-                    string str = "EncID: " + x + ", ClienteID: " + x1 + ", Data: " + s1 + ", Total: " + s2;
+                    int encId = Convert.ToInt32(dr["EncId"]);
+                    int clientId = Convert.ToInt32(dr["ClienteId"]);
+                    string date = dr["Data"].ToString();
+                    string total = dr["Total"].ToString();
+                    string str = "EncID: " + encId + ", ClienteID: " + clientId + ", Data: " + date + ", Total: " + total;
                     Console.WriteLine(str);
                 }
                 catch
@@ -250,30 +250,32 @@ namespace DatabaseExample4
             }
         }
 
-        public void InsertRecord()
+        //Inserts Order
+        public void InsertOrder()
         {
             Console.WriteLine($"\n=== INSERT ({(connected ? "ONLINE" : "OFFLINE")}) ===");
 
             try
             {
                 Console.WriteLine("Insira o id do cliente que efetuou a encomenda: ");
-                int id_cliente = Int32.Parse(Console.ReadLine());
+                int clientId = Int32.Parse(Console.ReadLine());
 
-                DateTime dataAtual = DateTime.Now;
-                Console.WriteLine("Data atual: " + dataAtual);
+                DateTime currentDate = DateTime.Now;
+                Console.WriteLine("Data atual: " + currentDate);
 
                 Console.WriteLine("Insira o total : ");
                 decimal total = Decimal.Parse(Console.ReadLine());
 
+                // Sends method to other method, based in being connected or not 
                 if (connected)
                 {
                     Console.WriteLine("Executando INSERT na base de dados...");
-                    InsertToDatabase(id_cliente, dataAtual, total);
+                    InsertToDatabase(clientId, currentDate, total);
                 }
                 else
                 {
                     Console.WriteLine("Executando INSERT offline...");
-                    InsertOffline(id_cliente, dataAtual, total);
+                    InsertOffline(clientId, currentDate, total);
                 }
 
                 // Salvar XML sempre
@@ -286,12 +288,12 @@ namespace DatabaseExample4
             }
         }
 
-        // NOVO MÉTODO: Insert na BD
+        // If connected, inserts into data base
         private void InsertToDatabase(int idCliente, DateTime data, decimal total)
         {
             try
             {
-                SqlCommandBuilder c = new SqlCommandBuilder(da);
+                SqlCommandBuilder cb = new SqlCommandBuilder(da);
                 DataRow dr = ds.Tables["Encomenda"].NewRow();
                 dr["ClienteId"] = idCliente;
                 dr["Data"] = data;
@@ -308,17 +310,17 @@ namespace DatabaseExample4
             }
         }
 
-        // NOVO MÉTODO: Insert offline
+        // If not connected, inserts in local DataSet
         private void InsertOffline(int idCliente, DateTime data, decimal total)
         {
-            // Adicionar à lista de instruções pendentes
-            Instruction s = new Instruction();
-            s.setInfo("insert", idCliente, total, -1);
-            instructions.Add(s);
+            // Adds insert into pending instructions
+            Instruction inst = new Instruction();
+            inst.setInfo("insert", idCliente, total, -1);
+            instructions.Add(inst);
             SaveInstructions();
 
-            // Calcular novo ID
-            int novoEncId = 1;
+            // Calculates new ID
+            int newEncId = 1;
             if (ds.Tables["Encomenda"].Rows.Count > 0)
             {
                 int maxId = 0;
@@ -331,47 +333,51 @@ namespace DatabaseExample4
                             maxId = currentId;
                     }
                 }
-                novoEncId = maxId + 1;
+                newEncId = maxId + 1;
             }
 
-            // Adicionar ao DataSet local
+            // Inserts into DataSet
             DataRow dr = ds.Tables["Encomenda"].NewRow();
-            dr["EncId"] = novoEncId;
+            dr["EncId"] = newEncId;
             dr["ClienteId"] = idCliente;
             dr["Data"] = data;
             dr["Total"] = total;
             ds.Tables["Encomenda"].Rows.Add(dr);
 
-            Console.WriteLine($"Instrução pendente criada (ID temporário: {novoEncId})");
+            Console.WriteLine($"Instrução pendente criada (ID temporário: {newEncId})");
         }
 
-        public void UpdateRecord()
+
+        // Updating Orders
+        public void UpdateOrder()
         {
             Console.WriteLine($"\n=== UPDATE ({(connected ? "ONLINE" : "OFFLINE")}) ===");
 
             Console.WriteLine("Insira o Id da encomenda:");
             int encId = Int32.Parse(Console.ReadLine());
 
-            DateTime dataAtual = DateTime.Now;
-            Console.WriteLine("Nova data: " + dataAtual);
+            DateTime currentDate = DateTime.Now;
+            Console.WriteLine("Nova data: " + currentDate);
 
             Console.WriteLine("Insira um novo total: ");
-            decimal novoTotal = Decimal.Parse(Console.ReadLine());
+            decimal newTotal = Decimal.Parse(Console.ReadLine());
 
+            // Sends to another method, based on if it is connected or not
             if (connected)
             {
-                UpdateToDatabase(encId, dataAtual, novoTotal);
+                UpdateToDatabase(encId, currentDate, newTotal);
             }
             else
             {
-                UpdateOffline(encId, dataAtual, novoTotal);
+                UpdateOffline(encId, currentDate, newTotal);
             }
 
             ds.WriteXml("dataset.xml", XmlWriteMode.WriteSchema);
             Console.WriteLine("✅ Registo atualizado com sucesso");
         }
 
-        private void UpdateToDatabase(int encId, DateTime data, decimal total)
+        //If connected updated in Data Base
+        private void UpdateToDatabase(int encId, DateTime date, decimal total)
         {
             try
             {
@@ -382,13 +388,13 @@ namespace DatabaseExample4
                 {
                     if (dr.RowState == DataRowState.Deleted) continue;
 
-                    // Verificar se o valor não é DBNull antes de converter
+                    // Before converting, checks if value is DBNull
                     if (dr["EncId"] != DBNull.Value)
                     {
-                        int x1 = Convert.ToInt32(dr["EncId"]);
-                        if (encId == x1)
+                        int encIdS = Convert.ToInt32(dr["EncId"]);
+                        if (encId == encIdS)
                         {
-                            dr["Data"] = data;
+                            dr["Data"] = date;
                             dr["Total"] = total;
                             recordFound = true;
                             break;
@@ -411,15 +417,16 @@ namespace DatabaseExample4
             }
         }
 
-        private void UpdateOffline(int encId, DateTime data, decimal total)
+        //If not connected updates in local DataSet
+        private void UpdateOffline(int encId, DateTime date, decimal total)
         {
-            // Guardar informações originais para deteção de conflitos
+            // Saves original data for conflict detection
             DataRow targetRow = null;
             foreach (DataRow dr in ds.Tables["Encomenda"].Rows)
             {
                 if (dr.RowState == DataRowState.Deleted) continue;
 
-                // Verificar se o valor não é DBNull antes de converter
+                // Check if value is not DBNull before converting
                 if (dr["EncId"] != DBNull.Value)
                 {
                     int x1 = Convert.ToInt32(dr["EncId"]);
@@ -433,21 +440,21 @@ namespace DatabaseExample4
 
             if (targetRow != null)
             {
-                Instruction s = new Instruction();
-                s.setInfo("update", -1, total, encId);
+                Instruction inst = new Instruction();
+                inst.setInfo("update", -1, total, encId);
 
-                // Guardar informações originais para deteção de conflitos
+                // Saves original data for conflict detection
                 byte[] originalRowVersion = targetRow["RowVersion"] != DBNull.Value ?
                     targetRow["RowVersion"] as byte[] : null;
                 DateTime originalData = targetRow["Data"] != DBNull.Value ?
                     Convert.ToDateTime(targetRow["Data"]) : DateTime.MinValue;
-                s.setConflictInfo(originalRowVersion, originalData);
+                inst.setConflictInfo(originalRowVersion, originalData);
 
-                instructions.Add(s);
+                instructions.Add(inst);
                 SaveInstructions();
 
-                // Atualizar no DataSet local
-                targetRow["Data"] = data;
+                // Saves in local DataSet
+                targetRow["Data"] = date;
                 targetRow["Total"] = total;
 
                 Console.WriteLine("Instrução de update pendente criada");
@@ -458,13 +465,15 @@ namespace DatabaseExample4
             }
         }
 
-        public void DeleteRecord()
+        //Deleting Orders
+        public void DeleteOrder()
         {
             Console.WriteLine($"\n=== DELETE ({(connected ? "ONLINE" : "OFFLINE")}) ===");
 
             Console.WriteLine("Insira o Id da encomenda que pretende eliminar:");
             int encId = Int32.Parse(Console.ReadLine());
 
+            // Sends to another method, based on if it is connected or not
             if (connected)
             {
                 DeleteFromDatabase(encId);
@@ -478,6 +487,7 @@ namespace DatabaseExample4
             Console.WriteLine("✅ Registo eliminado com sucesso");
         }
 
+        //If connection is up, delete from database
         private void DeleteFromDatabase(int encId)
         {
             try
@@ -489,11 +499,11 @@ namespace DatabaseExample4
                 {
                     if (dr.RowState == DataRowState.Deleted) continue;
 
-                    // Verificar se o valor não é DBNull antes de converter
+                    // Check if value is DBNull before converting
                     if (dr["EncId"] != DBNull.Value)
                     {
-                        int x1 = Convert.ToInt32(dr["EncId"]);
-                        if (encId == x1)
+                        int encIdS = Convert.ToInt32(dr["EncId"]);
+                        if (encId == encIdS)
                         {
                             dr.Delete();
                             recordFound = true;
@@ -517,19 +527,20 @@ namespace DatabaseExample4
             }
         }
 
+        //If connection is down, delete in local dataset
         private void DeleteOffline(int encId)
         {
-            // Guardar informações originais para deteção de conflitos
+
             DataRow targetRow = null;
             foreach (DataRow dr in ds.Tables["Encomenda"].Rows)
             {
                 if (dr.RowState == DataRowState.Deleted) continue;
 
-                // Verificar se o valor não é DBNull antes de converter
+                // Checks if value is DBNull before converting
                 if (dr["EncId"] != DBNull.Value)
                 {
-                    int x1 = Convert.ToInt32(dr["EncId"]);
-                    if (encId == x1)
+                    int encIdS = Convert.ToInt32(dr["EncId"]);
+                    if (encId == encIdS)
                     {
                         targetRow = dr;
                         break;
@@ -539,20 +550,20 @@ namespace DatabaseExample4
 
             if (targetRow != null)
             {
-                Instruction s = new Instruction();
-                s.setInfo("delete", -1, -1, encId);
+                Instruction inst = new Instruction();
+                inst.setInfo("delete", -1, -1, encId);
 
-                // Guardar informações originais para deteção de conflitos
+                // Saves original info for conflict detection
                 byte[] originalRowVersion = targetRow["RowVersion"] != DBNull.Value ?
                     targetRow["RowVersion"] as byte[] : null;
                 DateTime originalData = targetRow["Data"] != DBNull.Value ?
                     Convert.ToDateTime(targetRow["Data"]) : DateTime.MinValue;
-                s.setConflictInfo(originalRowVersion, originalData);
+                inst.setConflictInfo(originalRowVersion, originalData);
 
-                instructions.Add(s);
+                instructions.Add(inst);
                 SaveInstructions();
 
-                // Eliminar do DataSet local
+                // Deletes from local DataSet
                 targetRow.Delete();
                 Console.WriteLine("Instrução de delete pendente criada");
             }
@@ -562,6 +573,7 @@ namespace DatabaseExample4
             }
         }
 
+        // Called after every DataSet change, to save it in the instruction file
         public void SaveInstructions()
         {
             try
@@ -571,7 +583,7 @@ namespace DatabaseExample4
                 {
                     foreach (var instruction in instructions)
                     {
-                        // Formato: statement|idClient|total|idEncomenda|originalRowVersion|originalData
+                        // Format: statement|idClient|total|idEnc|originalRowVersion|originalDate
                         string rowVersionStr = instruction.originalRowVersion != null ?
                             Convert.ToBase64String(instruction.originalRowVersion) : "";
                         string originalDataStr = instruction.originalData != DateTime.MinValue ?
@@ -589,6 +601,7 @@ namespace DatabaseExample4
             }
         }
 
+        // Method used in app initialization
         public void LoadInstructions()
         {
             try
@@ -611,10 +624,10 @@ namespace DatabaseExample4
                                     parts[0],                           // statement
                                     int.Parse(parts[1]),               // idClient
                                     decimal.Parse(parts[2]),           // total
-                                    int.Parse(parts[3])                // idEncomenda
+                                    int.Parse(parts[3])                // idEnc
                                 );
 
-                                // Carregar informações de conflito se existirem
+                                // Load Conflict Infos if it exists
                                 if (parts.Length >= 6)
                                 {
                                     byte[] rowVersion = !string.IsNullOrEmpty(parts[4]) ?
@@ -642,6 +655,7 @@ namespace DatabaseExample4
             }
         }
 
+        //Reconcile Data Method
         public void reconcile()
         {
             Console.WriteLine("\n=== RECONCILIAÇÃO ===");
@@ -654,18 +668,18 @@ namespace DatabaseExample4
 
             Console.WriteLine($"Total de instruções pendentes: {instructions.Count}");
 
-            // Se já estamos online, só executar as instruções
+            // If connection is up, execute instructions
             if (connected)
             {
                 ExecutePendingInstructionsWithConflictDetection();
             }
             else
             {
-                // Tentar conectar para reconciliação
+                // Try to connect for reconciling data
                 if (TryConnect())
                 {
                     Console.WriteLine("Conexão estabelecida para reconciliação");
-                    LoadDataFromDatabase(); // Recarregar dados frescos
+                    LoadDataFromDatabase(); // Load fresh data
                     ExecutePendingInstructionsWithConflictDetection();
                 }
                 else
@@ -676,6 +690,7 @@ namespace DatabaseExample4
             }
         }
 
+        //Executes instructions and detects conflicts. Also calls methods for each type of conflict
         private void ExecutePendingInstructionsWithConflictDetection()
         {
             List<ConflictInfo> conflicts = new List<ConflictInfo>();
@@ -725,7 +740,7 @@ namespace DatabaseExample4
                 }
             }
 
-            // Processar conflitos
+            // Conflicts Processing
             if (conflicts.Count > 0)
             {
                 Console.WriteLine($"\n⚠️ {conflicts.Count} conflito(s) detetado(s)!");
@@ -733,16 +748,17 @@ namespace DatabaseExample4
             }
             else
             {
-                // Sem conflitos - limpar todas as instruções
+                // If there are no conflict - clear all instructions
                 FinishReconciliation(successfulInstructions);
             }
         }
 
+        //Verifies Conflicts with updated data
         private ConflictInfo DetectUpdateConflict(Instruction instruction)
         {
             if (instruction.originalRowVersion == null) return null;
 
-            // Verificar se o registo ainda existe e se foi modificado
+            // Verifies if record still exists and if it was modified
             string query = "SELECT EncId, ClienteId, Data, Total, RowVersion FROM Encomenda WHERE EncId = @EncId";
 
             using (SqlCommand cmd = new SqlCommand(query, con))
@@ -754,7 +770,7 @@ namespace DatabaseExample4
                     if (!reader.Read())
                     {
                         reader.Close();
-                        // Registo foi eliminado - conflito
+                        // Record was deleted - conflict
                         return new ConflictInfo
                         {
                             EncId = instruction.idEncomenda,
@@ -767,10 +783,10 @@ namespace DatabaseExample4
                     byte[] currentRowVersion = (byte[])reader["RowVersion"];
                     reader.Close();
 
-                    // Comparar RowVersions
+                    // Comparing RowVerions
                     if (!ByteArraysEqual(instruction.originalRowVersion, currentRowVersion))
                     {
-                        // Conflito detetado - buscar dados atuais
+                        // Record was modified - conflict
                         using (SqlCommand cmd2 = new SqlCommand(query, con))
                         {
                             cmd2.Parameters.AddWithValue("@EncId", instruction.idEncomenda);
@@ -796,34 +812,36 @@ namespace DatabaseExample4
                 }
             }
 
-            return null; // Sem conflito
+            return null; // No conflict
         }
 
+        //Verifies Conflicts with deleted data
         private ConflictInfo DetectDeleteConflict(Instruction instruction)
         {
             if (instruction.originalRowVersion == null) return null;
 
-            // Verificar se o registo ainda existe e se foi modificado
+            // Verifies if record still exists and if it was modified
             string query = "SELECT EncId, ClienteId, Data, Total, RowVersion FROM Encomenda WHERE EncId = @EncId";
 
             using (SqlCommand cmd = new SqlCommand(query, con))
             {
                 cmd.Parameters.AddWithValue("@EncId", instruction.idEncomenda);
 
+                // Verifies if record still exists - if not, no conflict
                 using (SqlDataReader reader = cmd.ExecuteReader())
                 {
                     if (!reader.Read())
                     {
                         reader.Close();
-                        return null; // Já foi eliminado - sem conflito
+                        return null;
                     }
 
                     byte[] currentRowVersion = (byte[])reader["RowVersion"];
 
-                    // Comparar RowVersions
+                    // Compares RowVersions, if they are different, record was modified - conflict
                     if (!ByteArraysEqual(instruction.originalRowVersion, currentRowVersion))
                     {
-                        // Conflito detetado - registo foi modificado antes da tentativa de eliminação
+                        //
                         return new ConflictInfo
                         {
                             EncId = instruction.idEncomenda,
@@ -837,9 +855,10 @@ namespace DatabaseExample4
                 }
             }
 
-            return null; // Sem conflito
+            return null; // No conflict
         }
 
+        //Shows conflicts to user and asks for action
         private void ProcessConflicts(List<ConflictInfo> conflicts, List<Instruction> successfulInstructions)
         {
             List<Instruction> resolvedInstructions = new List<Instruction>(successfulInstructions);
@@ -913,12 +932,12 @@ namespace DatabaseExample4
             switch (conflict.Operation)
             {
                 case "update":
-                    if (choice == 1) // Manter versão local
+                    if (choice == 1) //Keeping local version
                     {
                         syncUpdateWithRowVersion(conflict.EncId, conflict.LocalTotal, conflict.ServerRowVersion);
                         Console.WriteLine("✅ Versão local aplicada");
                     }
-                    else if (choice == 2) // Manter versão servidor
+                    else if (choice == 2) // Keep server version
                     {
                         Console.WriteLine("✅ Versão servidor mantida (nenhuma ação necessária)");
                     }
@@ -926,9 +945,8 @@ namespace DatabaseExample4
                     break;
 
                 case "update_deleted":
-                    if (choice == 1) // Recriar registo
+                    if (choice == 1) // Recreates Record
                     {
-                        // Usar insert para recriar o registo
                         string insertQuery = @"INSERT INTO Encomenda (EncId, ClienteId, Data, Total) VALUES (@EncId, @ClienteId, @Data, @Total)";
                         using (SqlCommand cmd = new SqlCommand(insertQuery, con))
                         {
@@ -940,16 +958,16 @@ namespace DatabaseExample4
                         }
                         Console.WriteLine("✅ Registo recriado com suas alterações");
                     }
-                    // choice == 2: Aceitar eliminação (nenhuma ação)
+                    // choice == 2: Accept delete
                     break;
 
                 case "delete_modified":
-                    if (choice == 1) // Eliminar mesmo assim
+                    if (choice == 1) // Delete anyway
                     {
                         syncDeleteWithRowVersion(conflict.EncId, conflict.ServerRowVersion);
                         Console.WriteLine("✅ Registo eliminado");
                     }
-                    // choice == 2: Manter registo (nenhuma ação)
+                    // choice == 2: Keep Record
                     break;
             }
         }
@@ -1006,7 +1024,7 @@ namespace DatabaseExample4
 
         private void FinishReconciliation(List<Instruction> resolvedInstructions)
         {
-            // Remover apenas as instruções resolvidas
+            // Remove only solved instructions
             foreach (var resolved in resolvedInstructions)
             {
                 instructions.RemoveAll(i => i.idEncomenda == resolved.idEncomenda &&
@@ -1016,7 +1034,7 @@ namespace DatabaseExample4
 
             if (instructions.Count == 0)
             {
-                // Limpar ficheiro de instruções se todas foram resolvidas
+                // If all are soved, clear file
                 try
                 {
                     string instructionsFile = "pending_instructions.txt";
@@ -1034,12 +1052,10 @@ namespace DatabaseExample4
             }
             else
             {
-                // Salvar instruções restantes
                 SaveInstructions();
                 Console.WriteLine($"⚠️ Reconciliação parcial - {instructions.Count} instrução(ões) ainda pendente(s)");
             }
 
-            // Recarregar dados da BD
             LoadDataFromDatabase();
         }
 
