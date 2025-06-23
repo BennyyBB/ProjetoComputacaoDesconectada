@@ -71,16 +71,16 @@
   <Encomenda>
     <EncId>15</EncId>
     <ClienteId>2</ClienteId>
-    <Data>2025-06-22T15:08:15.963+01:00</Data>
-    <Total>5750.00</Total>
-    <RowVersion>AAAAAAAAB9c=</RowVersion>
+    <Data>2025-06-23T01:32:48.05+01:00</Data>
+    <Total>5700.00</Total>
+    <RowVersion>AAAAAAAAB+Q=</RowVersion>
   </Encomenda>
   <Encomenda>
     <EncId>16</EncId>
     <ClienteId>2</ClienteId>
-    <Data>2025-06-22T17:38:33.567+01:00</Data>
-    <Total>798.00</Total>
-    <RowVersion>AAAAAAAAB9s=</RowVersion>
+    <Data>2025-06-23T01:28:38.713+01:00</Data>
+    <Total>637.60</Total>
+    <RowVersion>AAAAAAAAB+I=</RowVersion>
   </Encomenda>
   <Encomenda>
     <EncId>17</EncId>
@@ -95,5 +95,12 @@
     <Data>2025-06-22T17:53:52.817+01:00</Data>
     <Total>4440.00</Total>
     <RowVersion>AAAAAAAAB+A=</RowVersion>
+  </Encomenda>
+  <Encomenda>
+    <EncId>19</EncId>
+    <ClienteId>2</ClienteId>
+    <Data>2025-06-23T01:28:38.667+01:00</Data>
+    <Total>2780.50</Total>
+    <RowVersion>AAAAAAAAB+E=</RowVersion>
   </Encomenda>
 </NewDataSet>

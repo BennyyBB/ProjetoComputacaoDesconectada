@@ -68,3 +68,4 @@ C:\Users\berna\OneDrive\Ambiente de Trabalho\Universidade\Projeto\OnlyProgram\Co
 C:\Users\berna\OneDrive\Ambiente de Trabalho\Universidade\Projeto\OnlyProgram\ConsoleApp1\bin\Debug\net9.0\runtimes\win\lib\net9.0\System.Diagnostics.EventLog.Messages.dll
 C:\Users\berna\OneDrive\Ambiente de Trabalho\Universidade\Projeto\OnlyProgram\ConsoleApp1\bin\Debug\net9.0\runtimes\win\lib\net9.0\System.Diagnostics.EventLog.dll
 C:\Users\berna\OneDrive\Ambiente de Trabalho\Universidade\Projeto\OnlyProgram\ConsoleApp1\bin\Debug\net9.0\runtimes\win\lib\net9.0\System.Security.Cryptography.Pkcs.dll
+C:\Users\berna\OneDrive\Ambiente de Trabalho\Universidade\Projeto\OnlyProgram\ConsoleApp1\obj\Debug\net9.0\ConsoleApp1.sourcelink.json

@@ -67,13 +67,13 @@ namespace DatabaseExample4
             int ch;
             while (true)
             {
-                Console.WriteLine("Select a Database Operation: ");
+                Console.WriteLine("Escolhe uma Operação: ");
                 Console.WriteLine(@"1. Mostrar Encomendas
-                                    2. Inserir Encomendas
-                                    3. Atualizar Encomenda
-                                    4. Eliminar Encomenda
-                                    5. Reconciliar com Servidor BD
-                                    6. sair");
+2. Inserir Encomendas
+3. Atualizar Encomenda
+4. Eliminar Encomenda
+5. Reconciliar com Servidor BD
+6. Sair");
                 Console.WriteLine("Enter Your Choice: ");
                 ch = Int32.Parse(Console.ReadLine());
 
